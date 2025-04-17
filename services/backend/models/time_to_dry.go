@@ -13,3 +13,7 @@ type TimeToDry struct {
 	DiffHum  float64 `json:"diff_hum"`
 	TestID   int     `json:"test_id"`
 }
+
+func (TimeToDry) TableName() string {
+	return "time_to_dry"
+}

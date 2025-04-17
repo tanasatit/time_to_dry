@@ -25,6 +25,6 @@ func main() {
 		ReadTimeout:  15 * time.Second,
 	}
 
-	log.Println("Server started on port 8080")
+	log.Println("Server started on http://localhost:8080")
 	log.Fatal(srv.ListenAndServe())
 }

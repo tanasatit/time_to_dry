@@ -17,3 +17,7 @@ type CombinedData struct {
 	Rainfall    float64 `json:"rainfall"`
 	CreatedAt   string  `json:"created_at"`
 }
+
+func (CombinedData) TableName() string {
+	return "combined_data"
+}

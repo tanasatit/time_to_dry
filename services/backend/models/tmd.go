@@ -7,3 +7,7 @@ type TMD struct {
 	Humidity    float64 `json:"humidity"`
 	Rainfall    float64 `json:"rainfall"`
 }
+
+func (TMD) TableName() string {
+	return "tmd"
+}
