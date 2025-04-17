@@ -1,0 +1,14 @@
+/* src/styles/Home.module.css */
+.container {
+    padding: 2rem;
+  }
+  
+  .main {
+    text-align: center;
+  }
+  
+  .title {
+    font-size: 2rem;
+    color: #0070f3;
+  }
+  
