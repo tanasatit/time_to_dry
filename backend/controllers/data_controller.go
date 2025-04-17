@@ -14,24 +14,28 @@ import (
 	"gorm.io/gorm"
 )
 
+// GetTimeToDry returns all records from time_to_dry table.
 func GetTimeToDry(w http.ResponseWriter, r *http.Request) {
 	var data []models.TimeToDry
 	database.DB.Find(&data)
 	json.NewEncoder(w).Encode(data)
 }
 
+// GetTMD returns all records from the tmd table.
 func GetTMD(w http.ResponseWriter, r *http.Request) {
 	var data []models.TMD
 	database.DB.Find(&data)
 	json.NewEncoder(w).Encode(data)
 }
 
+// GetCombinedData returns all records from the combined_data table.
 func GetCombinedData(w http.ResponseWriter, r *http.Request) {
 	var data []models.CombinedData
 	database.DB.Find(&data)
 	json.NewEncoder(w).Encode(data)
 }
 
+// GetLatestTestID returns the highest test_id in the time_to_dry table.
 func GetLatestTestID(w http.ResponseWriter, r *http.Request) {
 	var latest models.TimeToDry
 	result := database.DB.Order("test_id desc").First(&latest)
@@ -46,6 +50,7 @@ func GetLatestTestID(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]int{"latest_test_id": latest.TestID})
 }
 
+// GetAllRowsOfLastestTestID returns all reacors from time_to_dry with the latest test_id.
 func GetAllRowsOfLatestTestID(w http.ResponseWriter, r *http.Request) {
 	var latest models.TimeToDry
 	if err := database.DB.Order("test_id desc").First(&latest).Error; err != nil {
@@ -58,6 +63,7 @@ func GetAllRowsOfLatestTestID(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(rows)
 }
 
+// GetLastOfLatestTestID returns the most recent row based on timestamp for the latest test_id.
 func GetLastRowOfLatestTestID(w http.ResponseWriter, r *http.Request) {
 	var latest models.TimeToDry
 	if err := database.DB.Order("test_id desc").First(&latest).Error; err != nil {
@@ -70,6 +76,7 @@ func GetLastRowOfLatestTestID(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(last)
 }
 
+// CheckDeviceStatus returnes whether the device is currently sending data (within 5 minutes).
 func CheckDeviceStatus(w http.ResponseWriter, r *http.Request) {
 	var latest models.TimeToDry
 	if err := database.DB.Order("timestamp desc").First(&latest).Error; err != nil {
@@ -91,6 +98,7 @@ func CheckDeviceStatus(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// PopulateCombinedData merges recors from time_to_dry and tmd, and stores in combined_data if no duplicate.
 func PopulateCombinedData(w http.ResponseWriter, r *http.Request) {
 	var timeData []models.TimeToDry
 	var tmdData []models.TMD
