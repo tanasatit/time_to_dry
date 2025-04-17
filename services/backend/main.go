@@ -1,28 +1,30 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
+	"time"
+
+	"backend/config"
+	"backend/database"
+	"backend/routes"
+
+	"github.com/gorilla/mux"
 )
 
 func main() {
-	handler := http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
-		var resp []byte
-		if req.URL.Path == "/status" {
-			resp = []byte(`{"status": "ok"}`)
-		} else if req.URL.Path == "/username" {
-			resp = []byte(`{"username": "colin"}`)
-		} else {
-			rw.WriteHeader(http.StatusNotFound)
-			return
-		}
-		
-		rw.Header().Set("Content-Type", "application/json")
-		rw.Header().Set("Content-Length", fmt.Sprint(len(resp)))
-		rw.Write(resp)
-	})
+	config.LoadEnvVariables()
+	database.Connect()
+	r := mux.NewRouter()
+	routes.RegisterRoutes(r)
 
-	log.Println("Server is available at http://localhost:8000")
-	log.Fatal(http.ListenAndServe(":8000", handler))
+	srv := &http.Server{
+		Handler:      r,
+		Addr:         ":8080",
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
+	}
+
+	log.Println("Server started on port 8080")
+	log.Fatal(srv.ListenAndServe())
 }
