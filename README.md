@@ -93,7 +93,7 @@ Make sure Node.js and npm are installed: https://nodejs.org/
 - Tables:
   - `time_to_dry` (Sensor Data)
   - `tmd` (Weather API Data)
-  - `drying_summary` (Combined data for analysis)
+  - `combined_data` (Combined data for analysis)
 
 
 ---
