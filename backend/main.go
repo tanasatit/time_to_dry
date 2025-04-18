@@ -8,6 +8,7 @@ import (
 	"backend/config"
 	"backend/database"
 	"backend/routes"
+	"backend/middleware"
 
 	"github.com/gorilla/mux"
 )
@@ -15,11 +16,13 @@ import (
 func main() {
 	config.LoadEnvVariables()
 	database.Connect()
+
 	r := mux.NewRouter()
 	routes.RegisterRoutes(r)
+	handler := middleware.CORS(r) 
 
 	srv := &http.Server{
-		Handler:      r,
+		Handler:      handler,
 		Addr:         ":8080",
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,

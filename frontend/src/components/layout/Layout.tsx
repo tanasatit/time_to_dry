@@ -1,6 +1,6 @@
 // src/components/layout/Layout.tsx
 import React from 'react';
-import Sidebar from './Sidebar';
+import Sidebar from './SideBar';
 
 type LayoutProps = {
   children: React.ReactNode;

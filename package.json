@@ -1,0 +1,11 @@
+{
+  "devDependencies": {
+    "@cypress/react": "^9.0.1",
+    "@cypress/react18": "^2.0.1",
+    "@cypress/webpack-dev-server": "^4.0.2",
+    "@types/jest": "^29.5.14",
+    "cypress": "^14.3.1",
+    "react-dom": "^18.3.1",
+    "vitest": "^3.1.1"
+  }
+}

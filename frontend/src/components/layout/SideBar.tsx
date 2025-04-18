@@ -1,4 +1,3 @@
-// src/components/layout/Sidebar.tsx
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
@@ -15,9 +14,10 @@ const navItems: NavItem[] = [
   { href: '/table', label: 'Drying Table', icon: '🧺' },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ pathname }: { pathname?: string }) {
   const router = useRouter();
-  
+  const currentPath = pathname ?? router.pathname;
+
   return (
     <div className="h-full flex flex-col">
       <div className="flex items-center justify-center h-16">
@@ -26,12 +26,12 @@ export default function Sidebar() {
       <div className="mt-5 flex-1 flex flex-col">
         <nav className="flex-1 px-2 space-y-1">
           {navItems.map((item) => (
-            <Link 
+            <Link
               key={item.href}
               href={item.href}
               className={`
                 group flex items-center px-2 py-2 text-base font-medium rounded-md
-                ${router.pathname === item.href
+                ${currentPath === item.href
                   ? 'bg-blue-100 text-blue-600'
                   : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'}
               `}
