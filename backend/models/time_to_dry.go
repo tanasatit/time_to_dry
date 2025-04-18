@@ -5,6 +5,7 @@ type TimeToDry struct {
 	Timestamp string  `json:"timestamp"`
 	Lat      float64 `json:"lat"`
 	Lon      float64 `json:"lon"`
+	Light    float64 `json:"light"`
 	TempIn   float64 `json:"temp_in"`
 	TempOut  float64 `json:"temp_out"`
 	HumIn    float64 `json:"hum_in"`
