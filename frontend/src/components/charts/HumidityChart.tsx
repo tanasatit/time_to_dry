@@ -13,7 +13,24 @@ export default function HumidityChart({ data }: HumidityChartProps) {
   const humOutSeries = data.map((d) => d.hum_out);
 
   const chartOptions: ApexOptions = {
-    chart: { type: 'area', toolbar: { show: false }, zoom: { enabled: true } },
+    chart: {
+      type: 'area',
+      toolbar: {
+        show: true,
+        tools: {
+          download: false,
+          selection: false,
+          zoom: false,
+          zoomin: true,
+          zoomout: true,
+          pan: false,
+          reset: true,
+        },
+      },
+      zoom: {
+        enabled: true,
+      },
+    },
     stroke: { curve: 'smooth', width: 1.5 },
     dataLabels: { enabled: false },
     xaxis: {

@@ -62,15 +62,11 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Humidity Chart */}
-        <div>
-        <HumidityChart data={dryingData} />
-        </div>
-
-        {/* Temperature Chart */}
-        <div>
-        <TemperatureChart data={dryingData} />
-        </div>
+        {/* Chart Row */}
+<div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+  <HumidityChart data={dryingData} />
+  <TemperatureChart data={dryingData} />
+</div>
       </div>
     </>
   );
