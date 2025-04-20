@@ -1,16 +1,7 @@
 import Head from 'next/head';
 import useSWR from 'swr';
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from 'recharts';
-import { formatTimeLabel } from '@/lib/moment';
+import HumidityChart from '../components/charts/HumidityChart';
+import TemperatureChart from '../components/charts/TemperatureChart';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -73,46 +64,12 @@ export default function Home() {
 
         {/* Humidity Chart */}
         <div>
-          <h2 className="text-2xl font-semibold mb-4">Humidity In vs Out</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={dryingData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis
-                dataKey="timestamp"
-                tickFormatter={formatTimeLabel}
-                angle={-45}
-                textAnchor="end"
-                height={60}
-              />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="hum_in" stroke="#8884d8" name="Humidity In" />
-              <Line type="monotone" dataKey="hum_out" stroke="#82ca9d" name="Humidity Out" />
-            </LineChart>
-          </ResponsiveContainer>
+        <HumidityChart data={dryingData} />
         </div>
 
         {/* Temperature Chart */}
         <div>
-          <h2 className="text-2xl font-semibold mb-4">Temperature In vs Out</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={dryingData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis
-                dataKey="timestamp"
-                tickFormatter={formatTimeLabel}
-                angle={-45}
-                textAnchor="end"
-                height={60}
-              />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="temp_in" stroke="#ff7300" name="Temperature In" />
-              <Line type="monotone" dataKey="temp_out" stroke="#387908" name="Temperature Out" />
-            </LineChart>
-          </ResponsiveContainer>
+        <TemperatureChart data={dryingData} />
         </div>
       </div>
     </>
