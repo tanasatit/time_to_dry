@@ -2,6 +2,7 @@ import Head from 'next/head';
 import useSWR from 'swr';
 import HumidityChart from '../components/charts/HumidityChart';
 import TemperatureChart from '../components/charts/TemperatureChart';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -18,7 +19,17 @@ export default function Home() {
     fetcher
   );
 
-  if (tmdLoading || statusLoading || dryingLoading) return <p className="text-center">Loading...</p>;
+  if (tmdLoading || statusLoading || dryingLoading) return (
+    <div className="flex items-center justify-center min-h-screen">
+      <DotLottieReact
+        src="https://lottie.host/8d2f602b-892f-4649-b0a9-0e8f55325b9a/o5I77hUzRP.lottie"
+        loop
+        autoplay
+        style={{ width: 500, height: 500 }}
+      />
+    </div>
+  );
+
   if (tmdError || statusError || dryingError) return <p className="text-center text-red-500">Failed to fetch data</p>;
 
   const latestTMD = tmd?.[tmd.length - 1];
@@ -62,7 +73,7 @@ export default function Home() {
 
         {/* Weather Cards */}
         <div>
-          <h2 className="text-2xl font-semibold mb-4">Weather</h2>
+          <h2 className="text-2xl font-semibold mb-4">Weather Today</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <Card icon="bi bi-thermometer-sun" label="Temperature" value={`${weatherData.temperature}°C`} />
             <Card icon="bi bi-droplet-half" label="Humidity" value={`${weatherData.humidity}%`} />
