@@ -25,7 +25,7 @@ export default function Home() {
         src="https://lottie.host/8d2f602b-892f-4649-b0a9-0e8f55325b9a/o5I77hUzRP.lottie"
         loop
         autoplay
-        style={{ width: 500, height: 500 }}
+        style={{ width: 300, height: 300 }}
       />
     </div>
   );

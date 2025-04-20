@@ -5,20 +5,17 @@ interface MetricCircleProps {
   value: number;
   label: string;
   unit: string;
+  bgColor?: string; 
 }
 
-export const MetricCircle: React.FC<MetricCircleProps> = ({ icon, value, label, unit }) => {
+export const MetricCircle: React.FC<MetricCircleProps> = ({ icon, value, label, unit, bgColor = 'bg-gray-100' }) => {
   return (
     <div className="flex flex-col items-center">
-      <div className="w-20 h-20 rounded-full border-4 border-gray-200 flex items-center justify-center relative">
-        <div className="absolute">
-          {icon}
-        </div>
-        <div className="text-lg font-bold mt-6">
-          {value}{unit}
-        </div>
+      <div className={`w-24 h-24 rounded-full ${bgColor} flex flex-col items-center justify-center shadow-inner`}>
+        <div className="text-2xl mb-1">{icon}</div>
+        <div className="text-lg font-bold">{value}{unit}</div>
       </div>
-      <p className="mt-2 text-gray-700">{label}</p>
+      <p className="mt-2 text-gray-700 text-sm">{label}</p>
     </div>
   );
 };
