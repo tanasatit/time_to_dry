@@ -50,7 +50,7 @@ export default function Home() {
 
       <div className="flex flex-col gap-8 p-6">
         {/* Page Header */}
-        <div className="flex justify-between items-center">
+        {/* <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-blue-600">Time to Dry</h1>
             <p className="text-gray-500">Your smart cloth drying assistant</p>
@@ -68,7 +68,7 @@ export default function Home() {
             ></i>
             {statusData?.is_working ? 'Online' : 'Offline'}
           </span>
-        </div>
+        </div> */}
 
 
         {/* Weather Cards */}
