@@ -18,12 +18,12 @@ export default function HumidityChart({ data }: HumidityChartProps) {
       toolbar: {
         show: true,
         tools: {
-          download: false,
+          download: true,
           selection: false,
           zoom: false,
           zoomin: true,
           zoomout: true,
-          pan: false,
+          pan: true,
           reset: true,
         },
       },
