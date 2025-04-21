@@ -67,6 +67,33 @@ func TMDToday(w http.ResponseWriter, r*http.Request) {
 	json.NewEncoder(w).Encode(data)
 }
 
+// TMDLast24Hours godoc
+// @Summary Get last 24 hours of TMD data (latest 8 rows)
+// @Description Returns the 8 most recent weather data records from the TMD table within the last 24 hours.
+// @Tags TMD
+// @Produce json
+// @Success 200 {array} models.TMD
+// @Router /api/tmd/recent [get]
+func TMDLast24Hours(w http.ResponseWriter, r *http.Request) {
+	now := time.Now()
+	past24 := now.Add(-24 * time.Hour)
+
+	var data []models.TMD
+	result := database.DB.
+		Where("timestamp >= ?", past24.Format("2006-01-02 15:04:05")).
+		Order("timestamp desc").
+		Limit(8).
+		Find(&data)
+
+	if result.Error != nil {
+		http.Error(w, "Failed to fetch recent TMD data", http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(w).Encode(data)
+}
+
+
 // GetCombinedData godoc
 // @Summary Get all combined records
 // @Description Returns all Weather API from tmd table.

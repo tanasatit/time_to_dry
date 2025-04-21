@@ -12,6 +12,7 @@ func RegisterRoutes(r *mux.Router) {
 	r.HandleFunc("/api/timetodry", controllers.GetTimeToDry).Methods("GET")
 	r.HandleFunc("/api/tmd", controllers.GetTMD).Methods("GET")
 	r.HandleFunc("/api/tmd/today", controllers.TMDToday).Methods("GET")
+	r.HandleFunc("/api/tmd/recent", controllers.TMDLast24Hours).Methods("GET")
 	r.HandleFunc("/api/combined", controllers.GetCombinedData).Methods("GET")
 	r.HandleFunc("/api/combined/populate", controllers.PopulateCombinedData).Methods("POST")
 

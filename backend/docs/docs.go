@@ -128,6 +128,29 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/tmd/recent": {
+            "get": {
+                "description": "Returns the 8 most recent weather data records from the TMD table within the last 24 hours.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "TMD"
+                ],
+                "summary": "Get last 24 hours of TMD data (latest 8 rows)",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.TMD"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/tmd/today": {
             "get": {
                 "description": "Returns all weather data from the TMD table for today.",
