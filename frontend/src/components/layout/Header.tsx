@@ -12,7 +12,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 bg-white shadow p-4 flex items-center justify-between border-b border-gray-200">
       {/* Left - Title & Description */}
       <div>
-        <h1 className="text-2xl font-bold text-blue-600">Time to Dry</h1>
+        <h1 className="text-2xl font-bold text-blue-600">Time To Dry</h1>
         <p className="text-gray-500 text-sm">Your smart cloth drying assistant</p>
       </div>
 
