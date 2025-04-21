@@ -1,3 +1,9 @@
+// @title Time To Dry API
+// @version 1.0
+// @description This is the backend API for the Time to Dry project.
+// @host localhost:8080
+// @BasePath /
+
 package main
 
 import (
@@ -30,4 +36,5 @@ func main() {
 
 	log.Println("Server started on http://localhost:8080")
 	log.Fatal(srv.ListenAndServe())
+	
 }

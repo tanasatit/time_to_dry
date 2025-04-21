@@ -1,0 +1,305 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is the backend API for the Time to Dry project.",
+        "title": "Time To Dry API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {
+        "/api/combined": {
+            "get": {
+                "description": "Returns all Weather API from tmd table.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CombinedData"
+                ],
+                "summary": "Get all combined records",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.CombinedData"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/combined/populate": {
+            "post": {
+                "description": "Matches closest timestamp from tmd for each time_to_dry record and inserts combined row if not duplicate.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "text/plain"
+                ],
+                "tags": [
+                    "CombinedData"
+                ],
+                "summary": "Populate combined_data from time_to_dry and tmd",
+                "responses": {
+                    "200": {
+                        "description": "Combined data populated",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/test/latest": {
+            "get": {
+                "description": "Returns the highest test_id from time_to_dry table.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Test"
+                ],
+                "summary": "Get the latest test_id",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/test/latest/all": {
+            "get": {
+                "description": "Returns all time_to_dry rows that share the latest test_id.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Test"
+                ],
+                "summary": "Get all rows of latest test_id",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.TimeToDry"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/test/latest/last": {
+            "get": {
+                "description": "Returns the latest time_to_dry row (by timestamp) for the latest test_id.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Test"
+                ],
+                "summary": "Get the most recent row of latest test_id",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.TimeToDry"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/test/status": {
+            "get": {
+                "description": "Returns whether the device is active (sending data within last 5 minutes).",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Device"
+                ],
+                "summary": "Check device status",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/timetodry": {
+            "get": {
+                "description": "Returns all sensor records from the time_to_dry table.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "TimeToDry"
+                ],
+                "summary": "Get all time_to_dry records",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.TimeToDry"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/tmd": {
+            "get": {
+                "description": "Returns all Weather API from tmd table.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "TMD"
+                ],
+                "summary": "Get all tmd records",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.TMD"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.CombinedData": {
+            "type": "object",
+            "properties": {
+                "api_humidity": {
+                    "type": "number"
+                },
+                "api_temp": {
+                    "type": "number"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "diff_hum": {
+                    "type": "number"
+                },
+                "diff_temp": {
+                    "type": "number"
+                },
+                "hum_in": {
+                    "type": "number"
+                },
+                "hum_out": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "lat": {
+                    "type": "number"
+                },
+                "lon": {
+                    "type": "number"
+                },
+                "rainfall": {
+                    "type": "number"
+                },
+                "temp_in": {
+                    "type": "number"
+                },
+                "temp_out": {
+                    "type": "number"
+                },
+                "test_id": {
+                    "type": "integer"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.TMD": {
+            "type": "object",
+            "properties": {
+                "humidity": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "rainfall": {
+                    "type": "number"
+                },
+                "temperature": {
+                    "type": "number"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.TimeToDry": {
+            "type": "object",
+            "properties": {
+                "diff_hum": {
+                    "type": "number"
+                },
+                "diff_temp": {
+                    "type": "number"
+                },
+                "hum_in": {
+                    "type": "number"
+                },
+                "hum_out": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "lat": {
+                    "type": "number"
+                },
+                "light": {
+                    "type": "number"
+                },
+                "lon": {
+                    "type": "number"
+                },
+                "temp_in": {
+                    "type": "number"
+                },
+                "temp_out": {
+                    "type": "number"
+                },
+                "test_id": {
+                    "type": "integer"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

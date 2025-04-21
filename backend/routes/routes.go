@@ -3,6 +3,9 @@ package routes
 import (
 	"github.com/gorilla/mux"
 	"backend/controllers"
+
+	"github.com/swaggo/http-swagger"
+	_ "backend/docs"
 )
 
 func RegisterRoutes(r *mux.Router) {
@@ -15,5 +18,7 @@ func RegisterRoutes(r *mux.Router) {
 	r.HandleFunc("/api/test/latest/all", controllers.GetAllRowsOfLatestTestID).Methods("GET")
 	r.HandleFunc("/api/test/latest/last", controllers.GetLastRowOfLatestTestID).Methods("GET")
 	r.HandleFunc("/api/test/status", controllers.CheckDeviceStatus).Methods("GET")
+
+	r.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
 
 }

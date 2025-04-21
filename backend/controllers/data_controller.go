@@ -14,28 +14,52 @@ import (
 	"gorm.io/gorm"
 )
 
-// GetTimeToDry returns all records from time_to_dry table.
+// GetTimeToDry godoc
+// @Summary Get all time_to_dry records
+// @Description Returns all sensor records from the time_to_dry table.
+// @Tags TimeToDry
+// @Produce json
+// @Success 200 {array} models.TimeToDry
+// @Router /api/timetodry [get]
 func GetTimeToDry(w http.ResponseWriter, r *http.Request) {
 	var data []models.TimeToDry
 	database.DB.Find(&data)
 	json.NewEncoder(w).Encode(data)
 }
 
-// GetTMD returns all records from the tmd table.
+// GetTMD godoc
+// @Summary Get all tmd records
+// @Description Returns all Weather API from tmd table.
+// @Tags TMD
+// @Produce json
+// @Success 200 {array} models.TMD
+// @Router /api/tmd [get]
 func GetTMD(w http.ResponseWriter, r *http.Request) {
 	var data []models.TMD
 	database.DB.Find(&data)
 	json.NewEncoder(w).Encode(data)
 }
 
-// GetCombinedData returns all records from the combined_data table.
+// GetCombinedData godoc
+// @Summary Get all combined records
+// @Description Returns all Weather API from tmd table.
+// @Tags CombinedData
+// @Produce json
+// @Success 200 {array} models.CombinedData
+// @Router /api/combined [get]
 func GetCombinedData(w http.ResponseWriter, r *http.Request) {
 	var data []models.CombinedData
 	database.DB.Find(&data)
 	json.NewEncoder(w).Encode(data)
 }
 
-// GetLatestTestID returns the highest test_id in the time_to_dry table.
+// GetLatestTestID godoc
+// @Summary Get the latest test_id
+// @Description Returns the highest test_id from time_to_dry table.
+// @Tags Test
+// @Produce json
+// @Success 200 {object} map[string]int
+// @Router /api/test/latest [get]
 func GetLatestTestID(w http.ResponseWriter, r *http.Request) {
 	var latest models.TimeToDry
 	result := database.DB.Order("test_id desc").First(&latest)
@@ -50,7 +74,13 @@ func GetLatestTestID(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]int{"latest_test_id": latest.TestID})
 }
 
-// GetAllRowsOfLastestTestID returns all reacors from time_to_dry with the latest test_id.
+// GetAllRowsOfLatestTestID godoc
+// @Summary Get all rows of latest test_id
+// @Description Returns all time_to_dry rows that share the latest test_id.
+// @Tags Test
+// @Produce json
+// @Success 200 {array} models.TimeToDry
+// @Router /api/test/latest/all [get]
 func GetAllRowsOfLatestTestID(w http.ResponseWriter, r *http.Request) {
 	var latest models.TimeToDry
 	if err := database.DB.Order("test_id desc").First(&latest).Error; err != nil {
@@ -63,7 +93,13 @@ func GetAllRowsOfLatestTestID(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(rows)
 }
 
-// GetLastOfLatestTestID returns the most recent row based on timestamp for the latest test_id.
+// GetLastRowOfLatestTestID godoc
+// @Summary Get the most recent row of latest test_id
+// @Description Returns the latest time_to_dry row (by timestamp) for the latest test_id.
+// @Tags Test
+// @Produce json
+// @Success 200 {object} models.TimeToDry
+// @Router /api/test/latest/last [get]
 func GetLastRowOfLatestTestID(w http.ResponseWriter, r *http.Request) {
 	var latest models.TimeToDry
 	if err := database.DB.Order("test_id desc").First(&latest).Error; err != nil {
@@ -76,7 +112,13 @@ func GetLastRowOfLatestTestID(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(last)
 }
 
-// CheckDeviceStatus returnes whether the device is currently sending data (within 5 minutes).
+// CheckDeviceStatus godoc
+// @Summary Check device status
+// @Description Returns whether the device is active (sending data within last 5 minutes).
+// @Tags Device
+// @Produce json
+// @Success 200 {object} map[string]interface{}
+// @Router /api/test/status [get]
 func CheckDeviceStatus(w http.ResponseWriter, r *http.Request) {
 	var latest models.TimeToDry
 	if err := database.DB.Order("timestamp desc").First(&latest).Error; err != nil {
@@ -98,7 +140,14 @@ func CheckDeviceStatus(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// PopulateCombinedData merges recors from time_to_dry and tmd, and stores in combined_data if no duplicate.
+// PopulateCombinedData godoc
+// @Summary Populate combined_data from time_to_dry and tmd
+// @Description Matches closest timestamp from tmd for each time_to_dry record and inserts combined row if not duplicate.
+// @Tags CombinedData
+// @Accept json
+// @Produce plain
+// @Success 200 {string} string "Combined data populated"
+// @Router /api/combined/populate [post]
 func PopulateCombinedData(w http.ResponseWriter, r *http.Request) {
 	var timeData []models.TimeToDry
 	var tmdData []models.TMD
