@@ -22,7 +22,7 @@ export default function Home() {
   if (tmdLoading || statusLoading || dryingLoading) return (
     <div className="flex items-center justify-center min-h-screen">
       <DotLottieReact
-        src="https://lottie.host/8d2f602b-892f-4649-b0a9-0e8f55325b9a/o5I77hUzRP.lottie"
+        src="/animations/loading.lottie"
         loop
         autoplay
         style={{ width: 300, height: 300 }}
@@ -49,28 +49,6 @@ export default function Home() {
       </Head>
 
       <div className="flex flex-col gap-8 p-6">
-        {/* Page Header */}
-        {/* <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-blue-600">Time to Dry</h1>
-            <p className="text-gray-500">Your smart cloth drying assistant</p>
-          </div>
-          <span
-            className={`flex items-center gap-2 px-4 py-1 rounded-full font-medium text-sm ${statusData?.is_working ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'
-              }`}
-          >
-            <i
-              className="bi bi-circle-fill"
-              style={{
-                color: statusData?.is_working ? 'green' : 'red',
-                fontSize: '0.75rem',
-              }}
-            ></i>
-            {statusData?.is_working ? 'Online' : 'Offline'}
-          </span>
-        </div> */}
-
-
         {/* Weather Cards */}
         <div>
           <h2 className="text-2xl font-semibold mb-4">Weather Today</h2>
