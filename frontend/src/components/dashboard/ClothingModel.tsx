@@ -1,61 +1,59 @@
-import React from 'react';
+import React, { useRef, useEffect, useState } from 'react';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 interface ClothingModelProps {
   humidityLevel: number;
 }
 
 export const ClothingModel: React.FC<ClothingModelProps> = ({ humidityLevel }) => {
-  // Calculate water level height as inverse of dryness
-  // 100% humidity = full water, 0% humidity = empty
-  const waterHeight = `${humidityLevel}%`;
-  
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
+  const waterTopOffset = Math.max(50, 200 - humidityLevel * 1.5);
+
+  // Update container dimensions for responsive layout
+  useEffect(() => {
+    if (containerRef.current) {
+      setContainerSize({
+        width: containerRef.current.offsetWidth,
+        height: containerRef.current.offsetHeight,
+      });
+    }
+  }, []);
+
+  // Convert humidity to percentage height (higher humidity = higher water)
+  const clampedHumidity = Math.min(90, Math.max(10, humidityLevel));
+
+  const waterHeightPercent = clampedHumidity;
+  const waveTop = 100 - waterHeightPercent;
+
   return (
-    <div className="relative w-64 h-80">
-      {/* Shirt outline */}
-      <svg viewBox="0 0 200 250" className="w-full h-full">
-        <path 
-          d="M50,50 L50,200 L150,200 L150,50 L120,30 C100,20 100,20 80,30 L50,50 Z" 
-          fill="none" 
-          stroke="black" 
-          strokeWidth="2"
+    <div ref={containerRef} className="relative w-64 h-80 overflow-hidden">
+      {/* Wave animation (Lottie) */}
+      <div
+        className="absolute left-[40px] w-[175px] z-10 overflow-hidden"
+        style={{
+          top: `${(containerSize.height * waveTop) / 100 - 40}px`,
+          height: `${(containerSize.height * waterHeightPercent) / 100}px`,
+          clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0% 100%)',
+        }}
+      >
+        <DotLottieReact
+          src="/animations/wave.lottie"
+          loop
+          autoplay
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
         />
-        <path 
-          d="M80,30 L80,70 L120,70 L120,30" 
-          fill="none" 
-          stroke="black" 
-          strokeWidth="2"
-        />
-        {/* Sleeves */}
-        <path 
-          d="M50,50 L20,80 L30,100 L50,80" 
-          fill="none" 
-          stroke="black" 
-          strokeWidth="2"
-        />
-        <path 
-          d="M150,50 L180,80 L170,100 L150,80" 
-          fill="none" 
-          stroke="black" 
-          strokeWidth="2"
-        />
-        
-        {/* Water visualization area - clipped to shirt body */}
-        <defs>
-          <clipPath id="shirtClip">
-            <path d="M51,51 L51,199 L149,199 L149,51 L120,31 C100,21 100,21 80,31 L51,51 Z" />
-          </clipPath>
-        </defs>
-        
-        {/* Water level - adjust height based on humidity */}
-        <rect 
-          x="51" 
-          y={`${200 - (humidityLevel * 1.5)}`} 
-          width="98" 
-          height="200" 
-          fill="rgba(0, 150, 255, 0.5)" 
-          clipPath="url(#shirtClip)" 
-        />
-      </svg>
+      </div>
+      <img
+        src="/drying_with_white_bg.svg"
+        alt="Shirt outline"
+        className="absolute top-0 left-0 w-full h-full z-20 pointer-events-none"
+        style={{
+          imageRendering: 'pixelated',
+          display: 'block',
+        }}
+      />
     </div>
+
   );
 };
