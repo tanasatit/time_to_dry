@@ -6,7 +6,7 @@ import DryingChart from '@/components/charts/DryingChart';
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function Home() {
-  const { data: tmd, error: tmdError, isLoading: tmdLoading } = useSWR('http://localhost:8080/api/tmd', fetcher);
+  const { data: tmd, error: tmdError, isLoading: tmdLoading } = useSWR('http://localhost:8080/api/tmd/recent', fetcher);
 
   if (tmdLoading) {
     return (
@@ -61,7 +61,7 @@ export default function Home() {
 
         {/* Weather Charts */}
         <div>
-          <h2 className="text-2xl font-semibold mb-4">Weather Last 24 Hours</h2>
+          <h2 className="text-2xl font-semibold mb-4">Recent Weather</h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
             <DryingChart
               data={tmd}

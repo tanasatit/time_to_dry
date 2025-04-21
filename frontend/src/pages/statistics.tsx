@@ -63,7 +63,7 @@ export default function Dashboard() {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Drying Dashboard</h1>
+      <h1 className="text-2xl font-bold mb-6">Drying Statistics</h1>
 
       <div className="flex flex-col md:flex-row gap-6">
         {/* Left Side */}
