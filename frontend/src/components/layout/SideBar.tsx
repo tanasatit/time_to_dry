@@ -11,7 +11,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   { href: '/', label: 'Home', icon: 'bi bi-house-door' },
   { href: '/statistics', label: 'Statistics', icon: 'bi bi-graph-up' },
-  { href: '/table', label: 'Drying Table', icon: 'bi bi-table' },
+  { href: '/dryingTable', label: 'Drying Table', icon: 'bi bi-table' },
 ];
 
 export default function Sidebar({ pathname }: { pathname?: string }) {
