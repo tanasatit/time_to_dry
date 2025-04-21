@@ -1,36 +1,29 @@
 import Head from 'next/head';
 import useSWR from 'swr';
-import HumidityChart from '../components/charts/HumidityChart';
-import TemperatureChart from '../components/charts/TemperatureChart';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import DryingChart from '@/components/charts/DryingChart';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-
-
 export default function Home() {
   const { data: tmd, error: tmdError, isLoading: tmdLoading } = useSWR('http://localhost:8080/api/tmd', fetcher);
-  const { data: statusData, error: statusError, isLoading: statusLoading } = useSWR(
-    'http://localhost:8080/api/test/status',
-    fetcher
-  );
-  const { data: dryingData, error: dryingError, isLoading: dryingLoading } = useSWR(
-    'http://localhost:8080/api/test/latest/all',
-    fetcher
-  );
 
-  if (tmdLoading || statusLoading || dryingLoading) return (
-    <div className="flex items-center justify-center min-h-screen">
-      <DotLottieReact
-        src="/animations/loading.lottie"
-        loop
-        autoplay
-        style={{ width: 300, height: 300 }}
-      />
-    </div>
-  );
+  if (tmdLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <DotLottieReact
+          src="https://lottie.host/8d2f602b-892f-4649-b0a9-0e8f55325b9a/o5I77hUzRP.lottie"
+          loop
+          autoplay
+          style={{ width: 300, height: 300 }}
+        />
+      </div>
+    );
+  }
 
-  if (tmdError || statusError || dryingError) return <p className="text-center text-red-500">Failed to fetch data</p>;
+  if (tmdError) {
+    return <p className="text-center text-red-500">Failed to fetch TMD data</p>;
+  }
 
   const latestTMD = tmd?.[tmd.length - 1];
 
@@ -66,11 +59,27 @@ export default function Home() {
           </div>
         </div>
 
-
-        {/* Chart Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <HumidityChart data={dryingData} />
-          <TemperatureChart data={dryingData} />
+        {/* Weather Charts */}
+        <div>
+          <h2 className="text-2xl font-semibold mb-4">Weather Last 24 Hours</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
+            <DryingChart
+              data={tmd}
+              title="Humidity"
+              yLabel="Humidity (%)"
+              series={[
+                { key: 'humidity', name: 'Humidity', color: '#1F45FC' }
+              ]}
+            />
+            <DryingChart
+              data={tmd}
+              title="Temperature"
+              yLabel="Temperature (°C)"
+              series={[
+                { key: 'temperature', name: 'Temperature', color: '#FF0000' }
+              ]}
+            />
+          </div>
         </div>
       </div>
     </>
@@ -78,7 +87,6 @@ export default function Home() {
 }
 
 function Card({ icon, label, value }: { icon: string; label: string; value: React.ReactNode }) {
-
   return (
     <div className="bg-white p-4 rounded-lg shadow-md text-center">
       <div className="text-4xl mb-2">
@@ -89,7 +97,6 @@ function Card({ icon, label, value }: { icon: string; label: string; value: Reac
     </div>
   );
 }
-
 
 function getRating(temp: number, hum: number, rain: number): number {
   if (rain > 0) return 1;
