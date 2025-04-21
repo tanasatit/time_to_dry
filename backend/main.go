@@ -35,6 +35,8 @@ func main() {
 	}
 
 	log.Println("Server started on http://localhost:8080")
+	log.Println("To Use swagger-ui use the URL below")
+	log.Println("Swagger started on http://localhost:8080/swagger/index.html")
 	log.Fatal(srv.ListenAndServe())
 	
 }
