@@ -5,8 +5,6 @@ import { MetricCircle } from '@/components/statistics/MetricCircle';
 import { ProgressBar } from '@/components/statistics/ProgressBar';
 import useSWR from 'swr';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
-import HumidityChart from '@/components/charts/TTDHumidityChart';
-import TemperatureChart from '@/components/charts/TTDTemperatureChart';
 import DryingChart from '@/components/charts/DryingChart';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
