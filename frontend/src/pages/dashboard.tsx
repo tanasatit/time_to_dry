@@ -1,66 +1,70 @@
 // src/pages/dashboard.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaSun, FaThermometerHalf, FaTint } from 'react-icons/fa';
 import { ClothingModel } from '@/components/dashboard/ClothingModel';
 import { MetricCircle } from '@/components/dashboard/MetricCircle';
 import { ProgressBar } from '@/components/dashboard/ProgressBar';
+import useSWR from 'swr';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
-// Mock data - replace with actual API call or data source
-const mockTests = [
-  { id: 1, test_id: "TEST-001" },
-  { id: 2, test_id: "TEST-002" },
-  { id: 3, test_id: "TEST-003" },
-];
-
-const mockData = {
-  timestamp: "2025-04-21T14:30:00",
-  light: 85,
-  temp_in: 26.5,
-  temp_out: 28.2,
-  hum_in: 78,
-  hum_out: 45,
-  diff_temp: 1.7,
-  diff_hum: -33,
-  test_id: "TEST-001",
-  status: "in_process",
-  startTime: "2025-04-21T12:00:00"
-};
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function Dashboard() {
-  const [selectedTest, setSelectedTest] = useState(mockTests[0].test_id);
-  const [data, setData] = useState(mockData);
-  const [duration, setDuration] = useState("02:30:00");
+  const { data: allTests } = useSWR<any[]>('http://localhost:8080/api/test/latest/all', fetcher);
 
-  // Calculate completion percentage - this is just an example logic
-  // You might want to adjust based on your specific requirements
-  const completionPercentage = 100 - Math.min(100, Math.max(0, data.hum_in));
+  const [selectedTest, setSelectedTest] = useState<number | null>(null);
+  const [duration, setDuration] = useState<string>('');
+  const [data, setData] = useState<any | null>(null);
 
-  // Update duration timer
   useEffect(() => {
-    const interval = setInterval(() => {
-      const start = new Date(data.startTime);
-      const now = new Date();
-      const diff = now.getTime() - start.getTime();
+    if (allTests && allTests.length > 0) {
+      const groupedByTestId: { [key: number]: any[] } = {};
+      allTests.forEach((entry) => {
+        if (!groupedByTestId[entry.test_id]) {
+          groupedByTestId[entry.test_id] = [];
+        }
+        groupedByTestId[entry.test_id].push(entry);
+      });
 
+      const testIds = Object.keys(groupedByTestId).map(Number);
+      const initialTestId = testIds[0];
+      setSelectedTest(initialTestId);
+
+      const selectedTestData = groupedByTestId[initialTestId];
+      const first = new Date(selectedTestData[0].timestamp);
+      const last = new Date(selectedTestData[selectedTestData.length - 1].timestamp);
+      const diff = last.getTime() - first.getTime();
       const hours = Math.floor(diff / (1000 * 60 * 60));
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      setDuration(`${hours} hour ${minutes} minute`);
 
-      setDuration(
-        `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-      );
-    }, 1000);
+      setData(selectedTestData[selectedTestData.length - 1]);
+    }
+  }, [allTests]);
 
-    return () => clearInterval(interval);
-  }, [data.startTime]);
-
-  // In a real app, you'd fetch data based on selected test
   useEffect(() => {
-    // Mock API call
-    // Example: fetchData(selectedTest).then(data => setData(data));
-    // For now, just update the test_id
-    setData({ ...data, test_id: selectedTest });
+    if (allTests && selectedTest !== null) {
+      const selectedTestData = allTests.filter((entry) => entry.test_id === selectedTest);
+      const first = new Date(selectedTestData[0].timestamp);
+      const last = new Date(selectedTestData[selectedTestData.length - 1].timestamp);
+      const diff = last.getTime() - first.getTime();
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      setDuration(`${hours} hour ${minutes} minute`);
+      setData(selectedTestData[selectedTestData.length - 1]);
+    }
   }, [selectedTest]);
+
+  if (!data) return ( <div className="flex items-center justify-center min-h-screen">
+    <DotLottieReact
+      src="/animations/loading.lottie"
+      loop
+      autoplay
+      style={{ width: 300, height: 300 }}
+    />
+  </div>);
+
+  const completionPercentage = 100 - Math.min(100, Math.max(0, data.hum_in));
 
   return (
     <div className="p-6">
@@ -92,13 +96,11 @@ export default function Dashboard() {
               unit="%"
               bgColor="bg-blue-100"
             />
-
           </div>
 
           {/* Shirt Model */}
           <div className="flex flex-col items-center">
             <ClothingModel humidityLevel={data.hum_in} />
-
             <div className="w-full mt-6">
               <p className="text-center mb-2">Drying Progress</p>
               <ProgressBar percentage={completionPercentage} />
@@ -115,11 +117,11 @@ export default function Dashboard() {
             <label className="block text-sm font-medium text-gray-700 mb-1">Select Test</label>
             <select
               className="w-full border border-gray-300 rounded-md py-2 px-3"
-              value={selectedTest}
-              onChange={(e) => setSelectedTest(e.target.value)}
+              value={selectedTest ?? ''}
+              onChange={(e) => setSelectedTest(Number(e.target.value))}
             >
-              {mockTests.map(test => (
-                <option key={test.id} value={test.test_id}>{test.test_id}</option>
+              {allTests && [...new Set(allTests.map(test => test.test_id))].map((id) => (
+                <option key={id} value={id}>{`TEST-${id}`}</option>
               ))}
             </select>
           </div>
@@ -127,7 +129,7 @@ export default function Dashboard() {
           <div className="grid grid-cols-2 gap-4">
             <div className="border rounded-md p-4">
               <h3 className="text-sm text-gray-500">Test ID</h3>
-              <p className="text-xl font-semibold">{data.test_id}</p>
+              <p className="text-xl font-semibold">TEST-{data.test_id}</p>
             </div>
 
             <div className="border rounded-md p-4">
@@ -137,8 +139,7 @@ export default function Dashboard() {
 
             <div className="border rounded-md p-4">
               <h3 className="text-sm text-gray-500">Status</h3>
-              <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${data.status === 'in_process' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'
-                }`}>
+              <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${data.status === 'in_process' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}`}>
                 {data.status === 'in_process' ? 'In Process' : 'Complete'}
               </div>
             </div>
