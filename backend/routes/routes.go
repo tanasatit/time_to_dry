@@ -23,6 +23,10 @@ func RegisterRoutes(r *mux.Router) {
 
 	r.HandleFunc("/api/forecast/rain", controllers.RainForecast).Methods("GET")
 
+	r.HandleFunc("/api/line/webhook", controllers.LineWebhook).Methods("POST")
+
 	r.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
+
+
 
 }

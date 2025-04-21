@@ -326,6 +326,17 @@ func RainForecast(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	// Line notification
+	// willRain
+	if true {
+		err := utils.PushLineMessage("☔ It might rain soon. Take action!", os.Getenv("LINE_USER_ID"))
+		log.Println("Try to send line")
+		if err != nil {
+			log.Println("Failed to send LINE alert:", err)
+		}
+	}
+	
+
 	json.NewEncoder(w).Encode(map[string]interface{}{
 		"will_rain_now_or_soon": willRain,
 		"source":                data["weather"],
