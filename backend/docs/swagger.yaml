@@ -111,54 +111,10 @@ paths:
       summary: Populate combined_data from time_to_dry and tmd
       tags:
       - CombinedData
-  /api/test/latest:
+  /api/forecast/rain:
     get:
-      description: Returns the highest test_id from time_to_dry table.
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties:
-              type: integer
-            type: object
-      summary: Get the latest test_id
-      tags:
-      - Test
-  /api/test/latest/all:
-    get:
-      description: Returns all time_to_dry rows that share the latest test_id.
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.TimeToDry'
-            type: array
-      summary: Get all rows of latest test_id
-      tags:
-      - Test
-  /api/test/latest/last:
-    get:
-      description: Returns the latest time_to_dry row (by timestamp) for the latest
-        test_id.
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.TimeToDry'
-      summary: Get the most recent row of latest test_id
-      tags:
-      - Test
-  /api/test/status:
-    get:
-      description: Returns whether the device is active (sending data within last
-        5 minutes).
+      description: Uses current weather data to estimate rainfall based on weather
+        description.
       produces:
       - application/json
       responses:
@@ -167,9 +123,9 @@ paths:
           schema:
             additionalProperties: true
             type: object
-      summary: Check device status
+      summary: Estimate if it's currently raining or likely to rain
       tags:
-      - Device
+      - Forecast
   /api/timetodry:
     get:
       description: Returns all sensor records from the time_to_dry table.
@@ -215,4 +171,63 @@ paths:
       summary: Get today's TMD records
       tags:
       - TMD
+  /api/ttd/latest:
+    get:
+      description: Returns the highest test_id from time_to_dry table.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+      summary: Get the latest test_id
+      tags:
+      - Test
+  /api/ttd/latest/all:
+    get:
+      description: Returns all time_to_dry rows that share the latest test_id.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.TimeToDry'
+            type: array
+      summary: Get all rows of latest test_id
+      tags:
+      - Test
+  /api/ttd/latest/last:
+    get:
+      description: Returns the latest time_to_dry row (by timestamp) for the latest
+        test_id.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.TimeToDry'
+      summary: Get the most recent row of latest test_id
+      tags:
+      - Test
+  /api/ttd/status:
+    get:
+      description: Returns whether the device is active (sending data within last
+        5 minutes).
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Check device status
+      tags:
+      - Device
 swagger: "2.0"

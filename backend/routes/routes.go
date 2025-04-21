@@ -15,10 +15,12 @@ func RegisterRoutes(r *mux.Router) {
 	r.HandleFunc("/api/combined", controllers.GetCombinedData).Methods("GET")
 	r.HandleFunc("/api/combined/populate", controllers.PopulateCombinedData).Methods("POST")
 
-	r.HandleFunc("/api/test/latest", controllers.GetLatestTestID).Methods("GET")
-	r.HandleFunc("/api/test/latest/all", controllers.GetAllRowsOfLatestTestID).Methods("GET")
-	r.HandleFunc("/api/test/latest/last", controllers.GetLastRowOfLatestTestID).Methods("GET")
-	r.HandleFunc("/api/test/status", controllers.CheckDeviceStatus).Methods("GET")
+	r.HandleFunc("/api/ttd/latest", controllers.GetLatestTestID).Methods("GET")
+	r.HandleFunc("/api/ttd/latest/all", controllers.GetAllRowsOfLatestTestID).Methods("GET")
+	r.HandleFunc("/api/ttd/latest/last", controllers.GetLastRowOfLatestTestID).Methods("GET")
+	r.HandleFunc("/api/ttd/status", controllers.CheckDeviceStatus).Methods("GET")
+
+	r.HandleFunc("/api/forecast/rain", controllers.RainForecast).Methods("GET")
 
 	r.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
 
