@@ -2,15 +2,19 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"sort"
+	"strings"
 	"time"
 
 	"backend/database"
 	"backend/models"
 	"backend/utils"
 
+	"github.com/joho/godotenv"
 	"gorm.io/gorm"
 )
 
@@ -82,7 +86,7 @@ func GetCombinedData(w http.ResponseWriter, r *http.Request) {
 // @Tags Test
 // @Produce json
 // @Success 200 {object} map[string]int
-// @Router /api/test/latest [get]
+// @Router /api/ttd/latest [get]
 func GetLatestTestID(w http.ResponseWriter, r *http.Request) {
 	var latest models.TimeToDry
 	result := database.DB.Order("test_id desc").First(&latest)
@@ -103,7 +107,7 @@ func GetLatestTestID(w http.ResponseWriter, r *http.Request) {
 // @Tags Test
 // @Produce json
 // @Success 200 {array} models.TimeToDry
-// @Router /api/test/latest/all [get]
+// @Router /api/ttd/latest/all [get]
 func GetAllRowsOfLatestTestID(w http.ResponseWriter, r *http.Request) {
 	var latest models.TimeToDry
 	if err := database.DB.Order("test_id desc").First(&latest).Error; err != nil {
@@ -122,7 +126,7 @@ func GetAllRowsOfLatestTestID(w http.ResponseWriter, r *http.Request) {
 // @Tags Test
 // @Produce json
 // @Success 200 {object} models.TimeToDry
-// @Router /api/test/latest/last [get]
+// @Router /api/ttd/latest/last [get]
 func GetLastRowOfLatestTestID(w http.ResponseWriter, r *http.Request) {
 	var latest models.TimeToDry
 	if err := database.DB.Order("test_id desc").First(&latest).Error; err != nil {
@@ -141,7 +145,7 @@ func GetLastRowOfLatestTestID(w http.ResponseWriter, r *http.Request) {
 // @Tags Device
 // @Produce json
 // @Success 200 {object} map[string]interface{}
-// @Router /api/test/status [get]
+// @Router /api/ttd/status [get]
 func CheckDeviceStatus(w http.ResponseWriter, r *http.Request) {
 	var latest models.TimeToDry
 	if err := database.DB.Order("timestamp desc").First(&latest).Error; err != nil {
@@ -249,4 +253,54 @@ func PopulateCombinedData(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Write([]byte("Combined data populated"))
+}
+
+// RainForecast godoc
+// @Summary Estimate if it's currently raining or likely to rain
+// @Description Uses current weather data to estimate rainfall based on weather description.
+// @Tags Forecast
+// @Produce json
+// @Success 200 {object} map[string]interface{}
+// @Router /api/forecast/rain [get]
+func RainForecast(w http.ResponseWriter, r *http.Request) {
+	err := godotenv.Load(".env")
+	if err != nil {
+		http.Error(w, "Failed to load .env", http.StatusInternalServerError)
+		return
+	}
+
+	apiKey := os.Getenv("OWM_API_KEY")
+	lat := os.Getenv("LAT")
+	lon := os.Getenv("LON")
+
+	url := fmt.Sprintf("https://api.openweathermap.org/data/2.5/weather?lat=%s&lon=%s&units=metric&appid=%s", lat, lon, apiKey)
+
+	resp, err := http.Get(url)
+	if err != nil || resp.StatusCode != 200 {
+		http.Error(w, "Failed to fetch weather data", http.StatusInternalServerError)
+		return
+	}
+	defer resp.Body.Close()
+
+	var data map[string]interface{}
+	json.NewDecoder(resp.Body).Decode(&data)
+
+	// Check weather[].main or description
+	willRain := false
+	if weatherArray, ok := data["weather"].([]interface{}); ok && len(weatherArray) > 0 {
+		condition := weatherArray[0].(map[string]interface{})
+		main := strings.ToLower(condition["main"].(string))
+		desc := strings.ToLower(condition["description"].(string))
+
+		// Basic keyword check
+		if strings.Contains(main, "rain") || strings.Contains(desc, "rain") ||
+			strings.Contains(desc, "shower") || strings.Contains(desc, "thunder") {
+			willRain = true
+		}
+	}
+
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"will_rain_now_or_soon": willRain,
+		"source":                data["weather"],
+	})
 }
