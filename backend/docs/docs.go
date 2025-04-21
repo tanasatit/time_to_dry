@@ -193,6 +193,29 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/api/tmd/today": {
+            "get": {
+                "description": "Returns all weather data from the TMD table for today.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "TMD"
+                ],
+                "summary": "Get today's TMD records",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.TMD"
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {

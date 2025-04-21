@@ -40,6 +40,29 @@ func GetTMD(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(data)
 }
 
+// TMDToday godoc
+// @Summary Get today's TMD records
+// @Description Returns all weather data from the TMD table for today.
+// @Tags TMD
+// @Produce json
+// @Success 200 {array} models.TMD
+// @Router /api/tmd/today [get]
+func TMDToday(w http.ResponseWriter, r*http.Request) {
+	now := time.Now()
+	startOfDay := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
+	endOfDay := startOfDay.Add(24 * time.Hour)
+
+	var data []models.TMD
+	result := database.DB.Where("timestamp BETWEEN ? AND ?", startOfDay.Format("2006-01-02 15:04:05"), endOfDay.Format("2006-01-02 15:04:05")).Find(&data)
+
+	if result.Error != nil {
+		http.Error(w, "Failed to fetch TMD data", http.StatusInternalServerError)
+		return
+	}
+	
+	json.NewEncoder(w).Encode(data)
+}
+
 // GetCombinedData godoc
 // @Summary Get all combined records
 // @Description Returns all Weather API from tmd table.

@@ -200,4 +200,19 @@ paths:
       summary: Get all tmd records
       tags:
       - TMD
+  /api/tmd/today:
+    get:
+      description: Returns all weather data from the TMD table for today.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.TMD'
+            type: array
+      summary: Get today's TMD records
+      tags:
+      - TMD
 swagger: "2.0"
