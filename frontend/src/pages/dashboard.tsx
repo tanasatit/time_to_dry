@@ -10,7 +10,7 @@ import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function Dashboard() {
-  const { data: allTests } = useSWR<any[]>('http://localhost:8080/api/test/latest/all', fetcher);
+  const { data: allTests } = useSWR<any[]>('http://localhost:8080/api/timetodry', fetcher);
 
   const [selectedTest, setSelectedTest] = useState<number | null>(null);
   const [duration, setDuration] = useState<string>('');
@@ -79,7 +79,7 @@ export default function Dashboard() {
               icon={<FaSun className="text-yellow-400" />}
               value={data.light}
               label="Light"
-              unit="%"
+              unit=""
               bgColor="bg-yellow-100"
             />
             <MetricCircle
