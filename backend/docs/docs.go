@@ -61,6 +61,64 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/drytime/estimate": {
+            "get": {
+                "description": "Estimate drying time in minutes using sensor variables",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Drying"
+                ],
+                "summary": "Estimate drying time",
+                "parameters": [
+                    {
+                        "type": "number",
+                        "description": "Internal temperature",
+                        "name": "temp_in",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "number",
+                        "description": "External temperature",
+                        "name": "temp_out",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "number",
+                        "description": "Internal humidity",
+                        "name": "hum_in",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "number",
+                        "description": "External humidity",
+                        "name": "hum_out",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "number",
+                        "description": "Light intensity",
+                        "name": "light",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/api/forecast/rain": {
             "get": {
                 "description": "Uses current weather data to estimate rainfall based on weather description.",

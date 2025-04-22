@@ -4,9 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"math"
 	"net/http"
 	"os"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 
@@ -387,5 +389,52 @@ func RainForecast(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]interface{}{
 		"will_rain_now_or_soon": willRain,
 		"source":                data["weather"],
+	})
+}
+
+
+// EstimateDryTime godoc
+// @Summary Estimate drying time
+// @Description Estimate drying time in minutes using sensor variables
+// @Tags Drying
+// @Produce json
+// @Param temp_in query float64 true "Internal temperature"
+// @Param temp_out query float64 true "External temperature"
+// @Param hum_in query float64 true "Internal humidity"
+// @Param hum_out query float64 true "External humidity"
+// @Param light query float64 true "Light intensity"
+// @Success 200 {object} map[string]interface{}
+// @Router /api/drytime/estimate [get]
+func EstimateDryTime(w http.ResponseWriter, r *http.Request) {
+	q := r.URL.Query()
+
+	tempIn, _ := strconv.ParseFloat(q.Get("temp_in"), 64)
+	tempOut, _ := strconv.ParseFloat(q.Get("temp_out"), 64)
+	humIn, _ := strconv.ParseFloat(q.Get("hum_in"), 64)
+	humOut, _ := strconv.ParseFloat(q.Get("hum_out"), 64)
+	light, _ := strconv.ParseFloat(q.Get("light"), 64)
+
+	diffTemp := tempIn - tempOut
+	diffHum := humIn - humOut
+
+	// 🔧 Empirical coefficients
+	base := 180.0 // base dry time in minutes
+	a, b, c := 5.0, 1.5, 0.0015
+
+	// Estimate formula
+	estimatedTime := base - (a * diffTemp) - (b * diffHum) - (c * light)
+	if estimatedTime < 10 {
+		estimatedTime = 10 // Minimum dry time
+	}
+
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"estimated_drying_time_minutes": math.Round(estimatedTime),
+		"inputs": map[string]float64{
+			"temp_in":  tempIn,
+			"temp_out": tempOut,
+			"hum_in":   humIn,
+			"hum_out":  humOut,
+			"light":    light,
+		},
 	})
 }
