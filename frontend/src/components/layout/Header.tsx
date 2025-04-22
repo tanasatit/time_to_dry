@@ -5,14 +5,14 @@ import useSWR from 'swr';
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function Header() {
-  const { data: statusData } = useSWR('http://localhost:8080/api/test/status', fetcher);
+  const { data: statusData } = useSWR('http://localhost:8080/api/ttd/status', fetcher);
   const [showNotification, setShowNotification] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 bg-white shadow p-4 flex items-center justify-between border-b border-gray-200">
       {/* Left - Title & Description */}
       <div>
-        <h1 className="text-2xl font-bold text-blue-600">Time to Dry</h1>
+        <h1 className="text-2xl font-bold text-blue-600">Time To Dry</h1>
         <p className="text-gray-500 text-sm">Your smart cloth drying assistant</p>
       </div>
 

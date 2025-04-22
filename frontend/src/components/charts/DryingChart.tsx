@@ -3,14 +3,26 @@ import { ApexOptions } from 'apexcharts';
 
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
-interface HumidityChartProps {
-  data: any[];
+interface SeriesConfig {
+  key: string;
+  name: string;
+  color: string;
 }
 
-export default function HumidityChart({ data }: HumidityChartProps) {
+interface DryingChartProps {
+  data: any[];
+  series: SeriesConfig[];
+  title: string;
+  yLabel: string;
+}
+
+export default function DryingChart({ data, series, title, yLabel }: DryingChartProps) {
   const categories = data.map((d) => new Date(d.timestamp).getTime());
-  const humInSeries = data.map((d) => d.hum_in);
-  const humOutSeries = data.map((d) => d.hum_out);
+
+  const chartSeries = series.map(s => ({
+    name: s.name,
+    data: data.map((d) => d[s.key]),
+  }));
 
   const chartOptions: ApexOptions = {
     chart: {
@@ -27,9 +39,7 @@ export default function HumidityChart({ data }: HumidityChartProps) {
           reset: true,
         },
       },
-      zoom: {
-        enabled: true,
-      },
+      zoom: { enabled: true },
     },
     stroke: { curve: 'smooth', width: 1.5 },
     dataLabels: { enabled: false },
@@ -45,24 +55,18 @@ export default function HumidityChart({ data }: HumidityChartProps) {
       },
       tickAmount: Math.min(Math.floor(categories.length / 10), 12),
     },
-    yaxis: { title: { text: 'Humidity (%)' } },
+    yaxis: { title: { text: yLabel } },
     grid: { borderColor: '#e0e0e0', strokeDashArray: 3 },
     tooltip: {
-      x: {
-        format: 'HH:mm',
-      },
+      x: { format: 'HH:mm' },
     },
+    colors: series.map(s => s.color),
   };
-
-  const series = [
-    { name: 'Humidity In', data: humInSeries },
-    { name: 'Humidity Out', data: humOutSeries },
-  ];
 
   return (
     <div className="bg-white p-4 rounded-lg shadow-md">
-      <h2 className="text-2xl font-semibold mb-4">Humidity In vs Out</h2>
-      <Chart options={chartOptions} series={series} type="area" width="100%" height="350" />
+      <h2 className="text-2xl font-semibold mb-4">{title}</h2>
+      <Chart options={chartOptions} series={chartSeries} type="area" width="100%" height="350" />
     </div>
   );
 }
