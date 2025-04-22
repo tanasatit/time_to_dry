@@ -11,13 +11,13 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function Dashboard() {
   const { data: allTests } = useSWR<any[]>('http://localhost:8080/api/timetodry', fetcher);
-  const { data: deviceStatus } = useSWR<{
-    is_working: boolean;
-    last_timestamp: string;
-    latest_test_id: number;
-  }>('http://localhost:8080/api/ttd/status', fetcher);
-
   const [selectedTest, setSelectedTest] = useState<number | null>(null);
+  const { data: deviceStatusByTest } = useSWR<{ status: string; test_id: number; last_timestamp: string }>(
+    selectedTest !== null ? `http://localhost:8080/api/ttd/status/check?test_id=${selectedTest}` : null,
+    fetcher,
+    { refreshInterval: 10000 }
+  );
+
   const [duration, setDuration] = useState<string>('');
   const [data, setData] = useState<any | null>(null);
   const [selectedTestData, setSelectedTestData] = useState<any[]>([]);
@@ -131,22 +131,23 @@ export default function Dashboard() {
               <h3 className="text-sm text-gray-500">Test ID</h3>
               <p className="text-xl font-semibold">TEST-{data.test_id}</p>
             </div>
+            
             <div className="border rounded-md p-4">
               <h3 className="text-sm text-gray-500">Duration</h3>
               <p className="text-xl font-semibold">{duration}</p>
             </div>
 
             <div className="border rounded-md p-4">
-  <h3 className="text-sm text-gray-500">Status</h3>
-  <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-    deviceStatus?.is_working
-      ? 'bg-green-100 text-green-800'
-      : 'bg-red-100 text-red-800'
-  }`}>
-    {deviceStatus?.is_working ? 'Collecting Data' : 'Inactive'}
-  </div>
-</div>
-
+              <h3 className="text-sm text-gray-500">Status</h3>
+              <div
+                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${deviceStatusByTest?.status === 'in_progress'
+                    ? 'bg-yellow-100 text-yellow-800'
+                    : 'bg-green-100 text-green-800'
+                  }`}
+              >
+                {deviceStatusByTest?.status === 'in_progress' ? 'In Process' : 'Completed'}
+              </div>
+            </div>
 
             <div className="border rounded-md p-4">
               <h3 className="text-sm text-gray-500">Last Update</h3>
@@ -154,6 +155,7 @@ export default function Dashboard() {
                 {new Date(data.timestamp).toLocaleTimeString()}
               </p>
             </div>
+
             <div className="border rounded-md p-4">
               <h3 className="text-sm text-gray-500">Temp Inside</h3>
               <p className="text-xl font-semibold">
@@ -166,18 +168,21 @@ export default function Dashboard() {
                 {data.hum_in}%
               </p>
             </div>
+
             <div className="border rounded-md p-4">
               <h3 className="text-sm text-gray-500">Temp Difference</h3>
               <p className="text-xl font-semibold">
                 {data.diff_temp > 0 ? '+' : ''}{data.diff_temp}°C
               </p>
             </div>
+
             <div className="border rounded-md p-4">
               <h3 className="text-sm text-gray-500">Humidity Difference</h3>
               <p className="text-xl font-semibold">
                 {data.diff_hum > 0 ? '+' : ''}{data.diff_hum}%
               </p>
             </div>
+
             <div className="border rounded-md p-4 col-span-2">
               <h3 className="text-sm text-gray-500">Estimated time finished</h3>
               <p className="text-xl font-semibold">
