@@ -22,6 +22,8 @@ func RegisterRoutes(r *mux.Router) {
 	r.HandleFunc("/api/ttd/status", controllers.CheckDeviceStatus).Methods("GET")
 	r.HandleFunc("/api/ttd/status/check", controllers.CheckTestStatus).Methods("GET")
 
+	r.HandleFunc("/api/drytime/estimate", controllers.EstimateDryTime).Methods("GET")
+
 	r.HandleFunc("/api/forecast/rain", controllers.RainForecast).Methods("GET")
 
 	r.HandleFunc("/api/line/webhook", controllers.LineWebhook).Methods("POST")
