@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/line/line-bot-sdk-go/v7/linebot"
+	// "github.com/line/line-bot-sdk-go/v7/linebot"
 )
 
 // LineWebhook handles incoming messages from LINE users.
