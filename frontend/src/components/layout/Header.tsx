@@ -1,7 +1,7 @@
 import React from 'react';
-import { useDryingStatus } from '../components/notification/useDryingStatus';
-import NotificationBell from '../components/notification/NotificationBell';
-import { addToast } from '../components/ToastManager'; 
+import { useDryingStatus } from '../notification/useDryingStatus';
+import NotificationBell from '../notification/NotificationBell';
+import { addToast } from '../ToastManager'; 
 
 export default function Header() {
   const { isWorking } = useDryingStatus();
