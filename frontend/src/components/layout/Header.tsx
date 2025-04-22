@@ -5,7 +5,7 @@ import useSWR from 'swr';
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function Header() {
-  const { data: statusData } = useSWR('http://localhost:8080/api/test/status', fetcher);
+  const { data: statusData } = useSWR('http://localhost:8080/api/ttd/status', fetcher);
   const [showNotification, setShowNotification] = useState(false);
 
   return (

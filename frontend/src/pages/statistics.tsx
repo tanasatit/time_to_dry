@@ -11,6 +11,11 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function Dashboard() {
   const { data: allTests } = useSWR<any[]>('http://localhost:8080/api/timetodry', fetcher);
+  const { data: deviceStatus } = useSWR<{
+    is_working: boolean;
+    last_timestamp: string;
+    latest_test_id: number;
+  }>('http://localhost:8080/api/ttd/status', fetcher);
 
   const [selectedTest, setSelectedTest] = useState<number | null>(null);
   const [duration, setDuration] = useState<string>('');
@@ -130,12 +135,19 @@ export default function Dashboard() {
               <h3 className="text-sm text-gray-500">Duration</h3>
               <p className="text-xl font-semibold">{duration}</p>
             </div>
+
             <div className="border rounded-md p-4">
-              <h3 className="text-sm text-gray-500">Status</h3>
-              <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${data.status === 'in_process' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}`}>
-                {data.status === 'in_process' ? 'In Process' : 'Complete'}
-              </div>
-            </div>
+  <h3 className="text-sm text-gray-500">Status</h3>
+  <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+    deviceStatus?.is_working
+      ? 'bg-green-100 text-green-800'
+      : 'bg-red-100 text-red-800'
+  }`}>
+    {deviceStatus?.is_working ? 'Collecting Data' : 'Inactive'}
+  </div>
+</div>
+
+
             <div className="border rounded-md p-4">
               <h3 className="text-sm text-gray-500">Last Update</h3>
               <p className="text-xl font-semibold">
@@ -182,26 +194,26 @@ export default function Dashboard() {
             <HumidityChart data={selectedTestData} />
             <TemperatureChart data={selectedTestData} />
           </div> */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
-      <DryingChart
-        data={selectedTestData}
-        title="Humidity In vs Out"
-        yLabel="Humidity (%)"
-        series={[
-          { key: 'hum_in', name: 'Humidity In', color: '#1F45FC' },
-          { key: 'hum_out', name: 'Humidity Out', color: '#1FD655' }
-        ]}
-      />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
+        <DryingChart
+          data={selectedTestData}
+          title="Humidity In vs Out"
+          yLabel="Humidity (%)"
+          series={[
+            { key: 'hum_in', name: 'Humidity In', color: '#1F45FC' },
+            { key: 'hum_out', name: 'Humidity Out', color: '#1FD655' }
+          ]}
+        />
 
-      <DryingChart
-        data={selectedTestData}
-        title="Temperature In vs Out"
-        yLabel="Temperature (°C)"
-        series={[
-          { key: 'temp_in', name: 'Temperature In', color: '#FF0000'},
-          { key: 'temp_out', name: 'Temperature Out', color: '#FFD700' }
-        ]}
-      />
+        <DryingChart
+          data={selectedTestData}
+          title="Temperature In vs Out"
+          yLabel="Temperature (°C)"
+          series={[
+            { key: 'temp_in', name: 'Temperature In', color: '#FF0000' },
+            { key: 'temp_out', name: 'Temperature Out', color: '#FFD700' }
+          ]}
+        />
       </div>
     </div>
   );
