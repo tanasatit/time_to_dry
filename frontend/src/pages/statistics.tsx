@@ -9,7 +9,7 @@ import DryingChart from '@/components/charts/DryingChart';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-export default function Dashboard() {
+export default function Statistics() {
   const { data: allTests } = useSWR<any[]>('http://localhost:8080/api/timetodry', fetcher);
   const [selectedTest, setSelectedTest] = useState<number | null>(null);
   const { data: deviceStatusByTest } = useSWR<{ status: string; test_id: number; last_timestamp: string }>(
@@ -43,29 +43,34 @@ export default function Dashboard() {
     if (allTests && selectedTest !== null) {
       const filtered = allTests.filter((entry) => entry.test_id === selectedTest);
       setSelectedTestData(filtered);
-
-      const first = new Date(filtered[0].timestamp);
-      const last = new Date(filtered[filtered.length - 1].timestamp);
-      const diff = last.getTime() - first.getTime();
-      const minutes = Math.round(diff / (1000 * 60));
-      setDurationMinutes(minutes);
-      setData(filtered[filtered.length - 1]);
-
-      const query = new URLSearchParams({
-        temp_in: filtered[filtered.length - 1].temp_in,
-        temp_out: filtered[filtered.length - 1].temp_out,
-        hum_in: filtered[filtered.length - 1].hum_in,
-        hum_out: filtered[filtered.length - 1].hum_out,
-        light: filtered[filtered.length - 1].light
-      }).toString();
-
-      fetch(`http://localhost:8080/api/drytime/estimate?${query}`)
-        .then((res) => res.json())
-        .then((res) => setEstimatedMinutes(res.estimated_drying_time_minutes))
-        .catch((err) => console.error('Failed to fetch estimated drying time:', err));
+  
+      if (filtered.length > 0) {
+        const first = new Date(filtered[0].timestamp);
+        const last = new Date(filtered[filtered.length - 1].timestamp);
+        const diff = last.getTime() - first.getTime();
+        const minutes = Math.round(diff / (1000 * 60));
+        setDurationMinutes(minutes);
+        setData(filtered[filtered.length - 1]);
+  
+        const lastEntry = filtered[filtered.length - 1];
+        const query = new URLSearchParams({
+          temp_in: String(lastEntry.temp_in),
+          temp_out: String(lastEntry.temp_out),
+          hum_in: String(lastEntry.hum_in),
+          hum_out: String(lastEntry.hum_out),
+          light: String(lastEntry.light),
+        }).toString();
+  
+        fetch(`http://localhost:8080/api/drytime/estimate?${query}`)
+          .then((res) => res.json())
+          .then((res) => setEstimatedMinutes(res.estimated_drying_time_minutes))
+          .catch((err) => console.error('Failed to fetch estimated drying time:', err));
+      } else {
+        console.warn('No test entries found for selected test');
+      }
     }
   }, [allTests, selectedTest]);
-
+  
   if (!data) return (
     <div className="flex items-center justify-center min-h-screen">
       <DotLottieReact
@@ -148,11 +153,16 @@ export default function Dashboard() {
               <p className="text-xl font-semibold">{data.diff_hum > 0 ? '+' : ''}{data.diff_hum}%</p>
             </div>
             <div className="border rounded-md p-4 col-span-2">
-              <h3 className="text-sm text-gray-500">Estimated time finished</h3>
+              <h3 className="text-sm text-gray-500">Estimated time remaining</h3>
               <p className="text-xl font-semibold">
-                {estimatedMinutes !== null ? `${Math.floor(estimatedMinutes / 60)} hour ${estimatedMinutes % 60} minute` : 'Estimating...'}
+                {estimatedMinutes !== null
+                  ? estimatedMinutes - durationMinutes > 0
+                    ? `${Math.floor((estimatedMinutes - durationMinutes) / 60)} hour ${(estimatedMinutes - durationMinutes) % 60} minute`
+                    : 'Done'
+                  : 'Estimating...'}
               </p>
             </div>
+
           </div>
         </div>
       </div>
