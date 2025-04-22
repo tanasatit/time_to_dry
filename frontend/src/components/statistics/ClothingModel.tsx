@@ -30,10 +30,10 @@ export const ClothingModel: React.FC<ClothingModelProps> = ({ humidityLevel }) =
     <div ref={containerRef} className="relative w-64 h-80 overflow-hidden">
       {/* Wave animation (Lottie) */}
       <div
-        className="absolute left-[40px] w-[175px] z-10 overflow-hidden"
+        className="absolute z-10 overflow-hidden"
         style={{
-          top: `${(containerSize.height * waveTop) / 100 - 40}px`,
-          height: `${(containerSize.height * waterHeightPercent) / 100}px`,
+          top: `${(containerSize.height * waveTop) / 100 + 10}px`,
+          height: `${(containerSize.height * waterHeightPercent) / 100 - 50}px`,
           clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0% 100%)',
         }}
       >

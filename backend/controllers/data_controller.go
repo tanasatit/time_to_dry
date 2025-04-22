@@ -422,7 +422,7 @@ func EstimateDryTime(w http.ResponseWriter, r *http.Request) {
 	a, b, c := 5.0, 1.5, 0.0015
 
 	// Estimate formula
-	estimatedTime := base - (a * diffTemp) - (b * diffHum) - (c * light)
+	estimatedTime := (base - (a * diffTemp) - (b * diffHum) - (c * light)) * 3.5
 	if estimatedTime < 10 {
 		estimatedTime = 10 // Minimum dry time
 	}

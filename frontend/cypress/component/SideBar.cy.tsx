@@ -1,5 +1,5 @@
 import React from 'react';
-import Sidebar from '@/components/layout/SideBar';
+import Sidebar from '@/layout/SideBar';
 
 // Create a mock version of the component that doesn't use the router
 const MockedSidebar = (props: { pathname?: string }) => {
