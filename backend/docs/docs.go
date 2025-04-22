@@ -176,7 +176,7 @@ const docTemplate = `{
         },
         "/api/ttd/latest": {
             "get": {
-                "description": "Returns the highest test_id from time_to_dry table.",
+                "description": "Returns the highest test_id from time_to_dry table. ex.GET http://localhost:8080/api/ttd/status/check?test_id=5",
                 "produces": [
                     "application/json"
                 ],
@@ -256,6 +256,48 @@ const docTemplate = `{
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ttd/status/check": {
+            "get": {
+                "description": "Returns whether a given test_id is still collecting data or completed.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Test"
+                ],
+                "summary": "Check specific test status",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Test ID to check",
+                        "name": "test_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Missing or invalid test_id",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "No records found",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 }

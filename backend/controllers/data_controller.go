@@ -109,7 +109,7 @@ func GetCombinedData(w http.ResponseWriter, r *http.Request) {
 
 // GetLatestTestID godoc
 // @Summary Get the latest test_id
-// @Description Returns the highest test_id from time_to_dry table.
+// @Description Returns the highest test_id from time_to_dry table. ex.GET http://localhost:8080/api/ttd/status/check?test_id=5
 // @Tags Test
 // @Produce json
 // @Success 200 {object} map[string]int
@@ -193,6 +193,54 @@ func CheckDeviceStatus(w http.ResponseWriter, r *http.Request) {
 		"last_timestamp": latest.Timestamp,
 	})
 }
+
+// CheckTestStatus godoc
+// @Summary Check specific test status
+// @Description Returns whether a given test_id is still collecting data or completed.
+// @Tags Test
+// @Produce json
+// @Param test_id query int true "Test ID to check"
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {string} string "Missing or invalid test_id"
+// @Failure 404 {string} string "No records found"
+// @Router /api/ttd/status/check [get]
+func CheckTestStatus(w http.ResponseWriter, r *http.Request) {
+	query := r.URL.Query().Get("test_id")
+	if query == "" {
+		http.Error(w, "Missing test_id parameter", http.StatusBadRequest)
+		return
+	}
+
+	var latest models.TimeToDry
+	result := database.DB.Where("test_id = ?", query).Order("timestamp desc").First(&latest)
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			http.Error(w, "No records found for given test_id", http.StatusNotFound)
+		} else {
+			http.Error(w, result.Error.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
+
+	timestamp, err := utils.ParseTimestamp(latest.Timestamp)
+	if err != nil {
+		http.Error(w, "Invalid timestamp format", http.StatusInternalServerError)
+		return
+	}
+
+	// Compare timestamp to now
+	status := "completed"
+	if time.Since(timestamp) <= 5*time.Minute {
+		status = "in_progress"
+	}
+
+	json.NewEncoder(w).Encode(map[string]any{
+		"test_id":        latest.TestID,
+		"status":         status,
+		"last_timestamp": latest.Timestamp,
+	})
+}
+
 
 // PopulateCombinedData godoc
 // @Summary Populate combined_data from time_to_dry and tmd
@@ -327,9 +375,8 @@ func RainForecast(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Line notification
-	// willRain
-	if true {
-		err := utils.PushLineMessage("☔ It might rain soon. Take action!", os.Getenv("LINE_USER_ID"))
+	if willRain {
+		err := utils.PushLineMessage("☔ It might rain soon. Take your clothes inside or Don't dry them now!", os.Getenv("LINE_USER_ID"))
 		log.Println("Try to send line")
 		if err != nil {
 			log.Println("Failed to send LINE alert:", err)

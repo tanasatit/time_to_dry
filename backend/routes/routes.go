@@ -20,6 +20,7 @@ func RegisterRoutes(r *mux.Router) {
 	r.HandleFunc("/api/ttd/latest/all", controllers.GetAllRowsOfLatestTestID).Methods("GET")
 	r.HandleFunc("/api/ttd/latest/last", controllers.GetLastRowOfLatestTestID).Methods("GET")
 	r.HandleFunc("/api/ttd/status", controllers.CheckDeviceStatus).Methods("GET")
+	r.HandleFunc("/api/ttd/status/check", controllers.CheckTestStatus).Methods("GET")
 
 	r.HandleFunc("/api/forecast/rain", controllers.RainForecast).Methods("GET")
 

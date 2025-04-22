@@ -189,7 +189,7 @@ paths:
       - TMD
   /api/ttd/latest:
     get:
-      description: Returns the highest test_id from time_to_dry table.
+      description: Returns the highest test_id from time_to_dry table. ex.GET http://localhost:8080/api/ttd/status/check?test_id=5
       produces:
       - application/json
       responses:
@@ -246,4 +246,32 @@ paths:
       summary: Check device status
       tags:
       - Device
+  /api/ttd/status/check:
+    get:
+      description: Returns whether a given test_id is still collecting data or completed.
+      parameters:
+      - description: Test ID to check
+        in: query
+        name: test_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Missing or invalid test_id
+          schema:
+            type: string
+        "404":
+          description: No records found
+          schema:
+            type: string
+      summary: Check specific test status
+      tags:
+      - Test
 swagger: "2.0"
