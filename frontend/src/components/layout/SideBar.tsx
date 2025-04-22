@@ -25,7 +25,7 @@ export default function Sidebar({ pathname }: { pathname?: string }) {
       <div className="flex items-center justify-center border-b border-gray-200">
       <Link href="/">
         <Image
-          src="/icon.ico"
+          src="/icon.png"
           alt="Time to Dry Logo"
           width={220}
           height={120}
